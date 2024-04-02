@@ -1,0 +1,21 @@
+{
+  "name": "node-jsdoc-to-html",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "docx2html": "^1.3.2",
+    "mammoth": "^1.6.0",
+    "pandoc-ts": "^1.0.5",
+    "word-to-html": "^3.0.3"
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.2"
+  }
+}
