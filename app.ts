@@ -5,7 +5,6 @@ async function convertWordToHtmlAsync(wordName: string, args: string[] = []): Pr
         const commandPrompt: string[] = ['--headless', '--convert-to', 'html:HTML:EmbedImages', wordName, '--outdir', 'html', ...args];
         let libreoffice: ChildProcessWithoutNullStreams = spawn("libreoffice", commandPrompt);
 
-
         libreoffice.stdout.on("data", (data: Buffer) => {
             console.log('stdout:', data.toString());
         });
