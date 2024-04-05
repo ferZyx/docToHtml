@@ -1,8 +1,8 @@
 import {ChildProcessWithoutNullStreams, spawn} from "child_process";
 
-async function convertWordToHtmlAsync(wordName: string, args: string[] = []): Promise<void> {
+export async function convertWordToHtmlAsync(wordName: string, outdir: string, args: string[] = []): Promise<void> {
     return new Promise<void>((resolve, reject): void => {
-        const commandPrompt: string[] = ['--headless', '--convert-to', 'html:HTML:EmbedImages', wordName, '--outdir', 'html', ...args];
+        const commandPrompt: string[] = ['--headless', '--convert-to', 'html:HTML:EmbedImages', wordName, '--outdir', outdir, ...args];
         let libreoffice: ChildProcessWithoutNullStreams = spawn("libreoffice", commandPrompt);
 
         libreoffice.stdout.on("data", (data: Buffer) => {
@@ -25,19 +25,3 @@ async function convertWordToHtmlAsync(wordName: string, args: string[] = []): Pr
         });
     });
 }
-
-convertWordToHtmlAsync('original.docx')
-    .then(() => {
-        console.log('Conversion DOCX! completed successfully');
-        convertWordToHtmlAsync('original.doc')
-            .then(() => {
-                console.log('Conversion DOC! completed successfully');
-            })
-            .catch((error) => {
-                console.error('Conversion failed:', error);
-            });
-
-    })
-    .catch((error) => {
-        console.error('Conversion failed:', error);
-    });
