@@ -30,16 +30,17 @@ async function convertWordToHtmlAsync(wordName: string, args: string[] = []): Pr
 
 convertWordToHtmlAsync('original.docx')
     .then(() => {
-        console.log('Conversion completed successfully');
+        console.log('Conversion DOCX! completed successfully');
+        convertWordToHtmlAsync('original.doc')
+            .then(() => {
+                console.log('Conversion DOC! completed successfully');
+            })
+            .catch((error) => {
+                console.error('Conversion failed:', error);
+            });
+
     })
     .catch((error) => {
         console.error('Conversion failed:', error);
     });
 
-convertWordToHtmlAsync('original.doc')
-    .then(() => {
-        console.log('Conversion completed successfully');
-    })
-    .catch((error) => {
-        console.error('Conversion failed:', error);
-    });
