@@ -3,7 +3,7 @@ import {ChildProcessWithoutNullStreams, spawn} from "child_process";
 async function convertWordToHtmlAsync(wordName: string, args: string[] = []): Promise<void> {
     return new Promise<void>((resolve, reject): void => {
         // libreoffice --headless --convert-to html:HTML:EmbedImages 10.doc --outdir html
-        const commandPrompt: string[] = ['headless', '--convert-to', 'html:HTML:EmbedImages', wordName, '--outdir html', ...args];
+        const commandPrompt: string[] = ['--headless', '--convert-to', 'html:HTML:EmbedImages', wordName, '--outdir', 'html', ...args];
         console.log('commandPrompt:', commandPrompt);
         let libreoffice: ChildProcessWithoutNullStreams = spawn("libreoffice", commandPrompt);
 
