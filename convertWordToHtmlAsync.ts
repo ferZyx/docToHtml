@@ -25,3 +25,24 @@ export async function convertWordToHtmlAsync(wordName: string, outdir: string, a
         });
     });
 }
+
+convertWordToHtmlAsync('1.doc', 'html').then(() => {
+        console.log('Конвертация завершена успешно 1')
+    }
+).catch((err) => {
+    console.error('Ошибка конвертации 1:', err);
+});
+
+convertWordToHtmlAsync('2.docx', 'html').then(() => {
+        console.log('Конвертация завершена успешно 2')
+    }
+).catch((err) => {
+    console.error('Ошибка конвертации 2:', err);
+});
+
+convertWordToHtmlAsync('3.docx', 'html').then(() => {
+        console.log('Конвертация завершена успешно 3')
+    }
+).catch((err) => {
+    console.error('Ошибка конвертации: 3', err);
+});

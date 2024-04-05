@@ -74,10 +74,10 @@ function convertWordToHtmlAsync(wordName_1) {
         });
     });
 }
-convertWordToHtmlAsync('original.docx')
+convertWordToHtmlAsync('2.docx')
     .then(function () {
     console.log('Conversion DOCX! completed successfully');
-    convertWordToHtmlAsync('original.doc')
+    convertWordToHtmlAsync('1.doc')
         .then(function () {
         console.log('Conversion DOC! completed successfully');
     })
