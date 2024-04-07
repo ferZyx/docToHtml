@@ -45,13 +45,14 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     return to.concat(ar || Array.prototype.slice.call(from));
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.convertWordToHtmlAsync = void 0;
 var child_process_1 = require("child_process");
-function convertWordToHtmlAsync(wordName_1) {
-    return __awaiter(this, arguments, void 0, function (wordName, args) {
+function convertWordToHtmlAsync(wordName_1, outdir_1) {
+    return __awaiter(this, arguments, void 0, function (wordName, outdir, args) {
         if (args === void 0) { args = []; }
         return __generator(this, function (_a) {
             return [2 /*return*/, new Promise(function (resolve, reject) {
-                    var commandPrompt = __spreadArray(['--headless', '--convert-to', 'html:HTML:EmbedImages', wordName, '--outdir', 'html'], args, true);
+                    var commandPrompt = __spreadArray(['--headless', '--convert-to', 'html:HTML:EmbedImages', wordName, '--outdir', outdir], args, true);
                     var libreoffice = (0, child_process_1.spawn)("libreoffice", commandPrompt);
                     libreoffice.stdout.on("data", function (data) {
                         console.log('stdout:', data.toString());
@@ -74,17 +75,19 @@ function convertWordToHtmlAsync(wordName_1) {
         });
     });
 }
-convertWordToHtmlAsync('2.docx')
-    .then(function () {
-    console.log('Conversion DOCX! completed successfully');
-    convertWordToHtmlAsync('1.doc')
-        .then(function () {
-        console.log('Conversion DOC! completed successfully');
-    })
-        .catch(function (error) {
-        console.error('Conversion failed:', error);
-    });
-})
-    .catch(function (error) {
-    console.error('Conversion failed:', error);
+exports.convertWordToHtmlAsync = convertWordToHtmlAsync;
+convertWordToHtmlAsync('1.doc', 'html').then(function () {
+    console.log('Конвертация завершена успешно 1');
+}).catch(function (err) {
+    console.error('Ошибка конвертации 1:', err);
+});
+convertWordToHtmlAsync('2.docx', 'html').then(function () {
+    console.log('Конвертация завершена успешно 2');
+}).catch(function (err) {
+    console.error('Ошибка конвертации 2:', err);
+});
+convertWordToHtmlAsync('3.docx', 'html').then(function () {
+    console.log('Конвертация завершена успешно 3');
+}).catch(function (err) {
+    console.error('Ошибка конвертации: 3', err);
 });
