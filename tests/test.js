@@ -7,7 +7,7 @@ import {wordToHtmlByLibreOffice} from "../wordToHtmlConverter.js";
     if (runtime === "libre"){
         const wordName = process.argv[3];
         try {
-            await wordToHtmlByLibreOffice(wordName, './tests/html');
+            await wordToHtmlByLibreOffice(wordName, './html-libre');
             console.log('Conversion completed successfully');
         } catch (err) {
             console.error('Error at test.js:', err);
