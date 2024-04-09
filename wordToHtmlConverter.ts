@@ -10,13 +10,16 @@ export async function wordToHtmlByLibreOffice(wordName: string, outdir: string, 
         });
 
         libreoffice.on("error", (err) => {
+            console.error(`Ошибка конвертации файла ${wordName}. ` + err.stack);
             reject(err);
         });
 
         libreoffice.on("exit", (code, signal) => {
             if (code !== 0) {
+                console.error(`Ошибка конвертации файла ${wordName}. Код: ${code} ${signal}`);
                 reject(new Error('Ошибка конвертации файла. Код: ' + code + ' ' + signal));
             } else {
+                console.log(`Конвертация файла ${wordName} завершена успешно`)
                 resolve();
             }
         });
