@@ -13,9 +13,11 @@ const startTime = new Date().getTime();
 
     if (runtime === "libremany") {
         await Promise.all([
-            wordToHtmlByLibreOffice('word/1.doc', './html-libre'),
+            wordToHtmlByLibreOffice('word/1.docx', './html-libre'),
             wordToHtmlByLibreOffice('word/2.docx', './html-libre'),
             wordToHtmlByLibreOffice('word/3.docx', './html-libre'),
+            wordToHtmlByLibreOffice('word/4.docx', './html-libre'),
+            wordToHtmlByLibreOffice('word/5.docx', './html-libre'),
         ])
     }
 
