@@ -25,3 +25,29 @@ export async function wordToHtmlByLibreOffice(wordName: string, outdir: string, 
         });
     });
 }
+
+export async function wordToHtmlByPandoc(wordName: string, htmlName: string, args: string[] = []): Promise<void> {
+    return new Promise<void>((resolve, reject): void => {
+        const commandPrompt: string[] = [wordName, '-o', htmlName, ...args];
+        let pandoc: ChildProcessWithoutNullStreams = spawn("pandoc", commandPrompt);
+
+        pandoc.stdout.on("data", (data: Buffer) => {
+            console.log('stdout:', data.toString());
+        });
+
+        pandoc.on("error", (err) => {
+            console.error(`Ошибка конвертации файла ${wordName}. ` + err.stack);
+            reject(err);
+        });
+
+        pandoc.on("exit", (code, signal) => {
+            if (code !== 0) {
+                console.error(`Ошибка конвертации файла ${wordName}. Код: ${code} ${signal}`);
+                reject(new Error('Ошибка конвертации файла. Код: ' + code + ' ' + signal));
+            } else {
+                console.log(`Конвертация файла ${wordName} завершена успешно`)
+                resolve();
+            }
+        });
+    });
+}

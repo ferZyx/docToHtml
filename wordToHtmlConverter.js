@@ -22,3 +22,26 @@ export async function wordToHtmlByLibreOffice(wordName, outdir, args = []) {
         });
     });
 }
+export async function wordToHtmlByPandoc(wordName, htmlName, args = []) {
+    return new Promise((resolve, reject) => {
+        const commandPrompt = [wordName, '-o', htmlName, ...args];
+        let pandoc = spawn("pandoc", commandPrompt);
+        pandoc.stdout.on("data", (data) => {
+            console.log('stdout:', data.toString());
+        });
+        pandoc.on("error", (err) => {
+            console.error(`Ошибка конвертации файла ${wordName}. ` + err.stack);
+            reject(err);
+        });
+        pandoc.on("exit", (code, signal) => {
+            if (code !== 0) {
+                console.error(`Ошибка конвертации файла ${wordName}. Код: ${code} ${signal}`);
+                reject(new Error('Ошибка конвертации файла. Код: ' + code + ' ' + signal));
+            }
+            else {
+                console.log(`Конвертация файла ${wordName} завершена успешно`);
+                resolve();
+            }
+        });
+    });
+}
