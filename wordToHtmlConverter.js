@@ -11,6 +11,7 @@ export async function wordToHtmlByLibreOffice(wordName, outdir, args = []) {
         });
         libreoffice.on("exit", (code, signal) => {
             if (code !== 0) {
+                console.log('code:', code);
                 reject(new Error('Ошибка конвертации файла'));
             }
             else {
