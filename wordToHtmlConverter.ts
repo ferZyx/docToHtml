@@ -28,7 +28,7 @@ export async function wordToHtmlByLibreOffice(wordName: string, outdir: string, 
 
 export async function wordToHtmlByPandoc(wordName: string, htmlName: string, args: string[] = []): Promise<void> {
     return new Promise<void>((resolve, reject): void => {
-        const commandPrompt: string[] = [wordName, '-o', htmlName, ...args];
+        const commandPrompt: string[] = [wordName, '-o', htmlName, '--self-contained', ...args];
         let pandoc: ChildProcessWithoutNullStreams = spawn("pandoc", commandPrompt);
 
         pandoc.stdout.on("data", (data: Buffer) => {

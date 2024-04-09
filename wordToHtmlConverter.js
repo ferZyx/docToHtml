@@ -24,7 +24,7 @@ export async function wordToHtmlByLibreOffice(wordName, outdir, args = []) {
 }
 export async function wordToHtmlByPandoc(wordName, htmlName, args = []) {
     return new Promise((resolve, reject) => {
-        const commandPrompt = [wordName, '-o', htmlName, ...args];
+        const commandPrompt = [wordName, '-o', htmlName, '--self-contained', ...args];
         let pandoc = spawn("pandoc", commandPrompt);
         pandoc.stdout.on("data", (data) => {
             console.log('stdout:', data.toString());
