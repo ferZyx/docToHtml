@@ -32,11 +32,11 @@ fs.mkdirSync('tests/html-pandoc', { recursive: true });
 
     if (runtime === "pandocmany") {
         await Promise.allSettled([
-            await wordToHtmlByPandoc('tests/word/' + 1 + '.docx', 'tests/html-pandoc/' + 1 + '.html'),
-            await wordToHtmlByPandoc('tests/word/' + 2 + '.docx', 'tests/html-pandoc/' + 2 + '.html'),
-            await wordToHtmlByPandoc('tests/word/' + 3 + '.docx', 'tests/html-pandoc/' + 3 + '.html'),
-            await wordToHtmlByPandoc('tests/word/' + 4 + '.docx', 'tests/html-pandoc/' + 4 + '.html'),
-            await wordToHtmlByPandoc('tests/word/' + 5 + '.docx', 'tests/html-pandoc/' + 5 + '.html'),
+            wordToHtmlByPandoc('tests/word/' + 1 + '.docx', 'tests/html-pandoc/' + 1 + '.html'),
+            wordToHtmlByPandoc('tests/word/' + 2 + '.docx', 'tests/html-pandoc/' + 2 + '.html'),
+            wordToHtmlByPandoc('tests/word/' + 3 + '.docx', 'tests/html-pandoc/' + 3 + '.html'),
+            wordToHtmlByPandoc('tests/word/' + 4 + '.docx', 'tests/html-pandoc/' + 4 + '.html'),
+            wordToHtmlByPandoc('tests/word/' + 5 + '.docx', 'tests/html-pandoc/' + 5 + '.html'),
         ])
     }
 
