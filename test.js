@@ -12,7 +12,7 @@ fs.mkdirSync('tests/html-pandoc', { recursive: true });
 
     if (runtime === "libreone") {
         const wordName = process.argv[3];
-        await wordToHtmlByLibreOffice('word/' + wordName ,'./html-libre');
+        await wordToHtmlByLibreOffice('tests/word/' + wordName ,'./html-libre');
     }
 
     if (runtime === "pandocone") {
@@ -23,11 +23,11 @@ fs.mkdirSync('tests/html-pandoc', { recursive: true });
 
     if (runtime === "libremany") {
         await Promise.allSettled([
-            wordToHtmlByLibreOffice('word/1.docx', './html-libre'),
-            wordToHtmlByLibreOffice('word/2.docx', './html-libre'),
-            wordToHtmlByLibreOffice('word/3.docx', './html-libre'),
-            wordToHtmlByLibreOffice('word/4.docx', './html-libre'),
-            wordToHtmlByLibreOffice('word/5.docx', './html-libre'),
+            wordToHtmlByLibreOffice('tests/word/1.docx', './tests/html-libre'),
+            wordToHtmlByLibreOffice('tests/word/2.docx', './tests/html-libre'),
+            wordToHtmlByLibreOffice('tests/word/3.docx', './tests/html-libre'),
+            wordToHtmlByLibreOffice('tests/word/4.docx', './tests/html-libre'),
+            wordToHtmlByLibreOffice('tests/word/5.docx', './tests/html-libre'),
         ])
     }
 
