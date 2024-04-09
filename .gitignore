@@ -4,3 +4,5 @@ node_modules
 pandoc.exe
 sample.html
 html
+tests/html-libre/*
+tests/html-pandoc/*
