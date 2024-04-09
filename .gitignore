@@ -5,5 +5,5 @@ pandoc.exe
 pandoc
 sample.html
 html
-tests/html-libre/*
-tests/html-pandoc/*
+tests/html-libre/
+tests/html-pandoc
