@@ -12,7 +12,7 @@ fs.mkdirSync('tests/html-pandoc', { recursive: true });
 
     if (runtime === "libreone") {
         const wordName = process.argv[3];
-        await wordToHtmlByLibreOffice('tests/word/' + wordName ,'./html-libre');
+        await wordToHtmlByLibreOffice('tests/word/' + wordName ,'./tests/html-libre');
     }
 
     if (runtime === "pandocone") {
