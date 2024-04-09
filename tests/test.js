@@ -5,7 +5,7 @@ const startTime = new Date().getTime();
 (async () => {
     const runtime = process.argv[2]
     console.log(runtime)
-    if (runtime === "libreOne") {
+    if (runtime === "libreone") {
         const wordName = process.argv[3];
         try {
             await wordToHtmlByLibreOffice(wordName, './html-libre');
@@ -15,20 +15,14 @@ const startTime = new Date().getTime();
         }
     }
 
-    if (runtime === "libreMany") {
+    if (runtime === "libremany") {
         try {
-            wordToHtmlByLibreOffice("word/1.doc", './html-libre').then(() => {
-                    console.log('Conversion completed successfully')
-                }
-            )
-            wordToHtmlByLibreOffice("word/2.docx", './html-libre').then(() => {
-                    console.log('Conversion completed successfully')
-                }
-            )
-            wordToHtmlByLibreOffice("word/3.docx", './html-libre').then(() => {
-                    console.log('Conversion completed successfully')
-                }
-            )
+            await Promise.all([
+                wordToHtmlByLibreOffice('word/1.doc', './html-libre'),
+                wordToHtmlByLibreOffice('word/2.docx', './html-libre'),
+                wordToHtmlByLibreOffice('word/3.docx', './html-libre'),
+            ])
+
         } catch (err) {
             console.error('Error at test.js:', err);
         }
