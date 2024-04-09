@@ -16,9 +16,8 @@ fs.mkdirSync('tests/html-pandoc', { recursive: true });
     }
 
     if (runtime === "pandocone") {
-        const wordName = process.argv[3];
-        const htmlName = process.argv[4];
-        await wordToHtmlByPandoc('tests/word/' + wordName, 'tests/html-pandoc/' + htmlName);
+        const fileName = process.argv[3];
+        await wordToHtmlByPandoc('tests/word/' + fileName + '.docx', 'tests/html-pandoc/' + fileName + '.html');
     }
 
     if (runtime === "libremany") {
@@ -28,6 +27,16 @@ fs.mkdirSync('tests/html-pandoc', { recursive: true });
             wordToHtmlByLibreOffice('tests/word/3.docx', './tests/html-libre'),
             wordToHtmlByLibreOffice('tests/word/4.docx', './tests/html-libre'),
             wordToHtmlByLibreOffice('tests/word/5.docx', './tests/html-libre'),
+        ])
+    }
+
+    if (runtime === "pandocmany") {
+        await Promise.allSettled([
+            await wordToHtmlByPandoc('tests/word/' + 1 + '.docx', 'tests/html-pandoc/' + 1 + '.html'),
+            await wordToHtmlByPandoc('tests/word/' + 2 + '.docx', 'tests/html-pandoc/' + 2 + '.html'),
+            await wordToHtmlByPandoc('tests/word/' + 3 + '.docx', 'tests/html-pandoc/' + 3 + '.html'),
+            await wordToHtmlByPandoc('tests/word/' + 4 + '.docx', 'tests/html-pandoc/' + 4 + '.html'),
+            await wordToHtmlByPandoc('tests/word/' + 5 + '.docx', 'tests/html-pandoc/' + 5 + '.html'),
         ])
     }
 
