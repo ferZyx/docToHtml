@@ -2,7 +2,7 @@ import {wordToHtmlByLibreOffice} from "../wordToHtmlConverter.js";
 
 const startTime = new Date().getTime();
 
-await (async () => {
+(async () => {
     const runtime = process.argv[2]
     console.log(runtime)
     if (runtime === "libreOne") {
@@ -17,15 +17,15 @@ await (async () => {
 
     if (runtime === "libreMany") {
         try {
-            wordToHtmlByLibreOffice("1.doc", './html-libre').then(() => {
+            wordToHtmlByLibreOffice("word/1.doc", './html-libre').then(() => {
                     console.log('Conversion completed successfully')
                 }
             )
-            wordToHtmlByLibreOffice("2.docx", './html-libre').then(() => {
+            wordToHtmlByLibreOffice("word/2.docx", './html-libre').then(() => {
                     console.log('Conversion completed successfully')
                 }
             )
-            wordToHtmlByLibreOffice("3.docx", './html-libre').then(() => {
+            wordToHtmlByLibreOffice("word/3.docx", './html-libre').then(() => {
                     console.log('Conversion completed successfully')
                 }
             )
@@ -34,6 +34,7 @@ await (async () => {
         }
     }
 
-})();
-const endTime = new Date().getTime();
-console.log(`Time spent: ${endTime - startTime} ms. `);
+})().then(() => {
+    const endTime = new Date().getTime();
+    console.log(`Time spent: ${endTime - startTime} ms. `);
+})
