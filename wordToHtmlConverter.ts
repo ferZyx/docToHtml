@@ -1,5 +1,12 @@
 import {ChildProcessWithoutNullStreams, spawn} from "child_process";
 
+/*
+* wordToHtmlByLibreOffice
+* @param wordName - путь к файлу word
+* @param outdir - путь к директории, куда сохранить html
+* @param args - дополнительные аргументы для libreoffice
+* @returns Promise<void>
+* */
 export async function wordToHtmlByLibreOffice(wordName: string, outdir: string, args: string[] = []): Promise<void> {
     return new Promise<void>((resolve, reject): void => {
         const commandPrompt: string[] = ['--headless', '--convert-to', 'html:HTML:EmbedImages', wordName, '--outdir', outdir, ...args];
@@ -26,6 +33,13 @@ export async function wordToHtmlByLibreOffice(wordName: string, outdir: string, 
     });
 }
 
+/*
+* wordToHtmlByPandoc
+* @param wordName - путь к файлу word
+* @param htmlName - путь к файлу html
+* @param args - дополнительные аргументы для pandoc
+* @returns Promise<void>
+* */
 export async function wordToHtmlByPandoc(wordName: string, htmlName: string, args: string[] = []): Promise<void> {
     return new Promise<void>((resolve, reject): void => {
         const commandPrompt: string[] = [wordName, '-o', htmlName, '--self-contained', ...args];
