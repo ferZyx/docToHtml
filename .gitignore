@@ -7,3 +7,4 @@ sample.html
 html
 tests/html-libre
 tests/html-pandoc
+tests/docx
