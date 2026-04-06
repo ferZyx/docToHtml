@@ -45,6 +45,24 @@ import { convertWordToHtml } from "doc-to-html";
 await convertWordToHtml("/files/input.doc", "/files/output.html");
 ```
 
+## CLI
+
+After installation:
+
+```bash
+doc-to-html /files/input.doc /files/output.html
+```
+
+Options:
+
+```bash
+doc-to-html --help
+doc-to-html --version
+doc-to-html input.doc output.html --timeout-ms 180000
+doc-to-html input.doc output.html --intermediate-dir /tmp/word --keep-intermediate
+doc-to-html input.docx output.html --no-self-contained
+```
+
 ### Convert `.doc` to `.docx` only
 
 ```js

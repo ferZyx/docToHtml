@@ -12,14 +12,18 @@
       "default": "./wordToHtmlConverter.js"
     }
   },
+  "bin": {
+    "doc-to-html": "./cli.js"
+  },
   "files": [
+    "cli.js",
     "wordToHtmlConverter.js",
     "wordToHtmlConverter.d.ts",
     "README.md",
     "LICENSE"
   ],
   "scripts": {
-    "test": "node -e \"import('./wordToHtmlConverter.js').then(()=>console.log('ok'))\"",
+    "test": "node --test cli.test.js && node -e \"import('./wordToHtmlConverter.js').then(()=>console.log('ok'))\"",
     "test:integration": "node test.js"
   },
   "keywords": [
