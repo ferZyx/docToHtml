@@ -10,9 +10,10 @@ function printUsage(stream = process.stdout) {
   stream.write(
     [
       "Usage:",
-      "  node-jsdoc-to-html <input.doc|input.docx> <output.html> [options]",
+      "  doc-to-html <input.doc|input.docx> <output.html> [options]",
       "",
       "Options:",
+      "  --tool <mammoth|pandoc>     Force conversion tool (default: mammoth)",
       "  --timeout-ms <number>       Timeout for conversion commands",
       "  --intermediate-dir <path>   Directory for temporary .docx files",
       "  --keep-intermediate         Keep intermediate converted .docx",
@@ -58,6 +59,21 @@ function parseArgs(argv) {
     if (arg === "--no-self-contained") {
       options.pandoc.selfContained = false;
       i += 1;
+      continue;
+    }
+
+    if (arg === "--tool") {
+      const value = (argv[i + 1] || "").toLowerCase();
+      if (!value) {
+        return { mode: "invalid", reason: "--tool requires value" };
+      }
+
+      if (value !== "mammoth" && value !== "pandoc") {
+        return { mode: "invalid", reason: "--tool must be one of: mammoth, pandoc" };
+      }
+
+      options.tool = value;
+      i += 2;
       continue;
     }
 

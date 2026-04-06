@@ -3,7 +3,7 @@
 Convert Microsoft Word documents (`.doc` and `.docx`) to HTML using:
 
 - LibreOffice (`soffice` / `libreoffice`) for `.doc -> .docx`
-- Pandoc for `.docx -> .html`
+- Mammoth (default) or Pandoc for `.docx -> .html`
 
 ## Installation
 
@@ -34,8 +34,8 @@ npm i git+https://github.com/ferZyx/docToHtml.git
 
 Make sure these tools are available in `PATH`:
 
-- `pandoc`
 - `soffice` or `libreoffice`
+- `pandoc` (required only if you use `--tool pandoc`)
 
 ## Usage
 
@@ -44,6 +44,8 @@ import { convertWordToHtml } from "doc-to-html";
 
 await convertWordToHtml("/files/input.doc", "/files/output.html");
 ```
+
+By default, converter uses `mammoth` tool for `.docx -> .html`.
 
 ## CLI
 
@@ -61,6 +63,8 @@ doc-to-html --version
 doc-to-html input.doc output.html --timeout-ms 180000
 doc-to-html input.doc output.html --intermediate-dir /tmp/word --keep-intermediate
 doc-to-html input.docx output.html --no-self-contained
+doc-to-html input.docx output.html --tool mammoth
+doc-to-html input.docx output.html --tool pandoc
 ```
 
 ### Convert `.doc` to `.docx` only
@@ -87,12 +91,13 @@ Converts `.doc` or `.docx` to HTML.
 
 For `.doc` files:
 1. converts to `.docx` via LibreOffice,
-2. converts resulting `.docx` to HTML via Pandoc.
+2. converts resulting `.docx` to HTML via selected tool (`mammoth` by default).
 
 ### Options
 
 ```ts
 interface ConvertWordToHtmlOptions {
+  tool?: "mammoth" | "pandoc";
   libreOffice?: {
     args?: string[];
     binary?: string;
@@ -108,6 +113,13 @@ interface ConvertWordToHtmlOptions {
     timeoutMs?: number;
     logger?: (message: string) => void;
   };
+  mammoth?: {
+    styleMap?: string[];
+    cwd?: string;
+    logger?: (message: string) => void;
+    maxDocxBytes?: number;
+    maxDocumentXmlBytes?: number;
+  };
   keepIntermediateDocx?: boolean;
   intermediateDir?: string;
 }
@@ -117,6 +129,8 @@ interface ConvertWordToHtmlOptions {
 
 - `.doc` support depends on LibreOffice availability.
 - Conversion result quality depends on Pandoc/LibreOffice versions and source document complexity.
+- `timeoutMs` applies to LibreOffice/Pandoc subprocesses.
+- For `--tool mammoth` with direct `.docx` input, timeout is not supported.
 
 ## Development checks
 

@@ -18,6 +18,7 @@
   "files": [
     "cli.js",
     "wordToHtmlConverter.js",
+    "wordToHtmlMammoth.js",
     "wordToHtmlConverter.d.ts",
     "README.md",
     "LICENSE"
@@ -48,5 +49,11 @@
   },
   "devDependencies": {
     "@types/node": "^20.12.2"
+  },
+  "dependencies": {
+    "cheerio": "1.0.0-rc.12",
+    "jszip": "^3.10.1",
+    "mammoth": "^1.11.0",
+    "sanitize-html": "^2.17.0"
   }
 }

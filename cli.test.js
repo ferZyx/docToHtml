@@ -15,6 +15,7 @@ test("cli --help prints usage", () => {
 
   assert.equal(run.status, 0);
   assert.equal(run.stdout.includes("Usage:"), true);
+  assert.equal(run.stdout.includes("--tool"), true);
 });
 
 test("cli without args exits with error", () => {
@@ -24,4 +25,13 @@ test("cli without args exits with error", () => {
 
   assert.equal(run.status, 1);
   assert.equal(run.stderr.includes("Usage:"), true);
+});
+
+test("cli rejects unsupported --tool value", () => {
+  const run = spawnSync(process.execPath, [cliPath, "in.docx", "out.html", "--tool", "unknown"], {
+    encoding: "utf-8",
+  });
+
+  assert.equal(run.status, 1);
+  assert.equal(run.stderr.includes("--tool must be one of"), true);
 });

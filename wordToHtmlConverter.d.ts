@@ -15,9 +15,18 @@ export interface PandocOptions extends CommandOptions {
   selfContained?: boolean;
 }
 
+export interface MammothOptions {
+  styleMap?: string[];
+  logger?: (message: string) => void;
+  maxDocxBytes?: number;
+  maxDocumentXmlBytes?: number;
+}
+
 export interface ConvertWordToHtmlOptions extends CommandOptions {
+  tool?: "mammoth" | "pandoc";
   libreOffice?: LibreOfficeOptions;
   pandoc?: PandocOptions;
+  mammoth?: MammothOptions;
   keepIntermediateDocx?: boolean;
   intermediateDir?: string;
 }
@@ -32,6 +41,12 @@ export function wordToHtmlByPandoc(
   wordPath: string,
   htmlPath: string,
   options?: PandocOptions,
+): Promise<string>;
+
+export function wordToHtmlByMammoth(
+  wordPath: string,
+  htmlPath: string,
+  options?: MammothOptions,
 ): Promise<string>;
 
 export function convertWordToHtml(

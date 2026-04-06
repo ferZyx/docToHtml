@@ -3,6 +3,8 @@ import os from "node:os";
 import path from "node:path";
 import { spawn } from "node:child_process";
 
+import { convertDocxToHtmlByMammoth } from "./wordToHtmlMammoth.js";
+
 function mergeCommandOptions(base, scoped = {}) {
   return {
     ...base,
@@ -183,6 +185,19 @@ export async function wordToHtmlByPandoc(wordPath, htmlPath, options = {}) {
   return htmlPath;
 }
 
+export async function wordToHtmlByMammoth(wordPath, htmlPath, options = {}) {
+  return convertDocxToHtmlByMammoth(wordPath, htmlPath, options);
+}
+
+function resolveTool(tool) {
+  const selected = (tool || "mammoth").toLowerCase();
+  if (selected !== "mammoth" && selected !== "pandoc") {
+    throw new Error(`Unsupported tool: ${selected}. Supported tools: mammoth, pandoc`);
+  }
+
+  return selected;
+}
+
 export async function convertWordToHtml(inputPath, outputHtmlPath, options = {}) {
   await assertFileExists(inputPath);
 
@@ -199,6 +214,13 @@ export async function convertWordToHtml(inputPath, outputHtmlPath, options = {})
 
   const tempRoot = options.intermediateDir || (await fs.mkdtemp(path.join(os.tmpdir(), "word-to-html-")));
   const shouldCleanupTemp = !options.intermediateDir;
+  const selectedTool = resolveTool(options.tool);
+
+  if (selectedTool === "mammoth" && ext === ".docx" && options.timeoutMs) {
+    throw new Error(
+      "timeoutMs is not supported with tool 'mammoth' for .docx input. Use tool 'pandoc' for timeout-controlled .docx conversion.",
+    );
+  }
 
   try {
     const sourceDocx =
@@ -210,10 +232,21 @@ export async function convertWordToHtml(inputPath, outputHtmlPath, options = {})
           )
         : inputPath;
 
-    return await wordToHtmlByPandoc(
+    if (selectedTool === "pandoc") {
+      return await wordToHtmlByPandoc(
+        sourceDocx,
+        outputHtmlPath,
+        mergeCommandOptions(baseCommandOptions, options.pandoc),
+      );
+    }
+
+    return await wordToHtmlByMammoth(
       sourceDocx,
       outputHtmlPath,
-      mergeCommandOptions(baseCommandOptions, options.pandoc),
+      {
+        logger: baseCommandOptions.logger,
+        ...(options.mammoth || {}),
+      },
     );
   } finally {
     if (shouldCleanupTemp && !options.keepIntermediateDocx) {
