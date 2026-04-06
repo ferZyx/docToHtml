@@ -1,61 +1,223 @@
-import { spawn } from "child_process";
-/*
-* wordToHtmlByLibreOffice
-* @param docName - путь к файлу doc
-* @param outdir - путь к директории, куда сохранить docx
-* @param args - дополнительные аргументы для libreoffice
-* @returns Promise<void>
-* */
-export async function docToDocxByLibreOffice(docName, outdir, args = []) {
-    return new Promise((resolve, reject) => {
-        const commandPrompt = ['--headless', '--convert-to', 'docx', docName, '--outdir', outdir, ...args];
-        let libreoffice = spawn("libreoffice", commandPrompt);
-        libreoffice.stdout.on("data", (data) => {
-            console.log('stdout:', data.toString());
-        });
-        libreoffice.on("error", (err) => {
-            console.error(`Ошибка конвертации файла ${docName}. ` + err.stack);
-            reject(err);
-        });
-        libreoffice.on("exit", (code, signal) => {
-            if (code !== 0) {
-                console.error(`Ошибка конвертации файла ${docName}. Код: ${code} ${signal}`);
-                reject(new Error('Ошибка конвертации файла. Код: ' + code + ' ' + signal));
-            }
-            else {
-                console.log(`Конвертация файла ${docName} завершена успешно`);
-                resolve();
-            }
-        });
-    });
+import fs from "node:fs/promises";
+import os from "node:os";
+import path from "node:path";
+import { spawn } from "node:child_process";
+
+function mergeCommandOptions(base, scoped = {}) {
+  return {
+    ...base,
+    ...scoped,
+  };
 }
-/*
-* wordToHtmlByPandoc
-* @param wordName - путь к файлу word
-* @param htmlName - путь к файлу html
-* @param args - дополнительные аргументы для pandoc
-* @returns Promise<void>
-* */
-export async function wordToHtmlByPandoc(wordName, htmlName, args = []) {
-    return new Promise((resolve, reject) => {
-        const commandPrompt = [wordName, '-o', htmlName, '--self-contained', ...args];
-        let pandoc = spawn("pandoc", commandPrompt);
-        pandoc.stdout.on("data", (data) => {
-            console.log('stdout:', data.toString());
-        });
-        pandoc.on("error", (err) => {
-            console.error(`Ошибка конвертации файла ${wordName}. ` + err.stack);
-            reject(err);
-        });
-        pandoc.on("exit", (code, signal) => {
-            if (code !== 0) {
-                console.error(`Ошибка конвертации файла ${wordName}. Код: ${code} ${signal}`);
-                reject(new Error('Ошибка конвертации файла. Код: ' + code + ' ' + signal));
-            }
-            else {
-                console.log(`Конвертация файла ${wordName} завершена успешно`);
-                resolve();
-            }
-        });
+
+function terminateProcess(child) {
+  const pid = child.pid;
+  if (!pid) {
+    return;
+  }
+
+  if (process.platform === "win32") {
+    spawn("taskkill", ["/pid", String(pid), "/t", "/f"], { stdio: "ignore" });
+    return;
+  }
+
+  try {
+    child.kill("SIGTERM");
+  } catch {
+    return;
+  }
+
+  setTimeout(() => {
+    try {
+      child.kill("SIGKILL");
+    } catch {
+      return;
+    }
+  }, 2_000);
+}
+
+async function assertFileExists(filePath) {
+  await fs.access(filePath);
+}
+
+async function ensureDirectory(dirPath) {
+  await fs.mkdir(dirPath, { recursive: true });
+}
+
+function basenameWithoutExt(filePath) {
+  return path.basename(filePath, path.extname(filePath));
+}
+
+function formatCommandError(command, args, stderr, code) {
+  const renderedArgs = args.map((arg) => `"${arg}"`).join(" ");
+  const details = stderr.trim() ? `\n${stderr.trim()}` : "";
+  return `Command failed: ${command} ${renderedArgs} (code: ${code ?? "null"})${details}`;
+}
+
+async function runCommand(command, args, options = {}) {
+  const { cwd, timeoutMs = 120_000, logger } = options;
+
+  return new Promise((resolve, reject) => {
+    const child = spawn(command, args, { cwd, stdio: ["ignore", "pipe", "pipe"] });
+
+    let stdout = "";
+    let stderr = "";
+    let timedOut = false;
+
+    const timeout = setTimeout(() => {
+      timedOut = true;
+      terminateProcess(child);
+    }, timeoutMs);
+
+    child.stdout.on("data", (chunk) => {
+      const msg = chunk.toString();
+      stdout += msg;
+      if (logger) {
+        logger(msg);
+      }
     });
+
+    child.stderr.on("data", (chunk) => {
+      const msg = chunk.toString();
+      stderr += msg;
+      if (logger) {
+        logger(msg);
+      }
+    });
+
+    child.on("error", (error) => {
+      clearTimeout(timeout);
+      reject(error);
+    });
+
+    child.on("close", (code) => {
+      clearTimeout(timeout);
+
+      if (timedOut) {
+        reject(new Error(`Command timed out after ${timeoutMs}ms: ${command}`));
+        return;
+      }
+
+      if (code !== 0) {
+        reject(new Error(formatCommandError(command, args, stderr, code)));
+        return;
+      }
+
+      resolve({ stdout, stderr });
+    });
+  });
+}
+
+function getLibreOfficeCandidates(binary) {
+  if (binary) {
+    return [binary];
+  }
+
+  if (process.platform === "win32") {
+    return ["soffice.exe", "soffice", "libreoffice"];
+  }
+
+  return ["soffice", "libreoffice"];
+}
+
+async function runLibreOfficeWithFallback(args, options = {}) {
+  const { binary, ...commandOptions } = options;
+  const candidates = getLibreOfficeCandidates(binary);
+  let lastError;
+
+  for (const candidate of candidates) {
+    try {
+      await runCommand(candidate, args, commandOptions);
+      return;
+    } catch (error) {
+      lastError = error;
+    }
+  }
+
+  throw new Error(
+    `Unable to run LibreOffice (${candidates.join(", ")}). ${String(lastError instanceof Error ? lastError.message : lastError)}`,
+  );
+}
+
+export async function docToDocxByLibreOffice(docPath, outputDir, options = {}) {
+  await assertFileExists(docPath);
+  await ensureDirectory(outputDir);
+
+  const args = [
+    "--headless",
+    "--convert-to",
+    "docx",
+    "--outdir",
+    outputDir,
+    docPath,
+    ...(options.args || []),
+  ];
+
+  await runLibreOfficeWithFallback(args, options);
+
+  const outputPath = path.join(outputDir, `${basenameWithoutExt(docPath)}.docx`);
+  await assertFileExists(outputPath);
+  return outputPath;
+}
+
+export async function wordToHtmlByPandoc(wordPath, htmlPath, options = {}) {
+  await assertFileExists(wordPath);
+  await ensureDirectory(path.dirname(htmlPath));
+
+  const binary = options.binary || "pandoc";
+  const selfContained = options.selfContained ?? true;
+  const args = [
+    "--from",
+    "docx",
+    "--to",
+    "html5",
+    wordPath,
+    "-o",
+    htmlPath,
+    ...(selfContained ? ["--self-contained"] : []),
+    ...(options.args || []),
+  ];
+
+  await runCommand(binary, args, options);
+  await assertFileExists(htmlPath);
+  return htmlPath;
+}
+
+export async function convertWordToHtml(inputPath, outputHtmlPath, options = {}) {
+  await assertFileExists(inputPath);
+
+  const ext = path.extname(inputPath).toLowerCase();
+  if (ext !== ".doc" && ext !== ".docx") {
+    throw new Error(`Unsupported file extension: ${ext}. Only .doc and .docx are supported.`);
+  }
+
+  const baseCommandOptions = {
+    cwd: options.cwd,
+    timeoutMs: options.timeoutMs,
+    logger: options.logger,
+  };
+
+  const tempRoot = options.intermediateDir || (await fs.mkdtemp(path.join(os.tmpdir(), "word-to-html-")));
+  const shouldCleanupTemp = !options.intermediateDir;
+
+  try {
+    const sourceDocx =
+      ext === ".doc"
+        ? await docToDocxByLibreOffice(
+            inputPath,
+            tempRoot,
+            mergeCommandOptions(baseCommandOptions, options.libreOffice),
+          )
+        : inputPath;
+
+    return await wordToHtmlByPandoc(
+      sourceDocx,
+      outputHtmlPath,
+      mergeCommandOptions(baseCommandOptions, options.pandoc),
+    );
+  } finally {
+    if (shouldCleanupTemp && !options.keepIntermediateDocx) {
+      await fs.rm(tempRoot, { recursive: true, force: true });
+    }
+  }
 }

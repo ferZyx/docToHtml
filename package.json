@@ -1,15 +1,47 @@
 {
   "name": "node-jsdoc-to-html",
-  "version": "1.0.0",
-  "description": "",
-  "main": "app.js",
+  "version": "1.1.0",
+  "description": "Convert .doc/.docx files to HTML using LibreOffice + Pandoc",
+  "main": "./wordToHtmlConverter.js",
+  "types": "./wordToHtmlConverter.d.ts",
   "type": "module",
-  "scripts": {
-    "start": "node app.js"
+  "exports": {
+    ".": {
+      "types": "./wordToHtmlConverter.d.ts",
+      "import": "./wordToHtmlConverter.js",
+      "default": "./wordToHtmlConverter.js"
+    }
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "files": [
+    "wordToHtmlConverter.js",
+    "wordToHtmlConverter.d.ts",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node -e \"import('./wordToHtmlConverter.js').then(()=>console.log('ok'))\"",
+    "test:integration": "node test.js"
+  },
+  "keywords": [
+    "doc",
+    "docx",
+    "html",
+    "pandoc",
+    "libreoffice"
+  ],
+  "author": "ferZyx",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ferZyx/docToHtml.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ferZyx/docToHtml/issues"
+  },
+  "homepage": "https://github.com/ferZyx/docToHtml#readme",
+  "engines": {
+    "node": ">=18"
+  },
   "devDependencies": {
     "@types/node": "^20.12.2"
   }
