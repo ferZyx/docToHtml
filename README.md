@@ -1,4 +1,4 @@
-# node-jsdoc-to-html
+# doc-to-html
 
 Convert Microsoft Word documents (`.doc` and `.docx`) to HTML using:
 
@@ -10,7 +10,7 @@ Convert Microsoft Word documents (`.doc` and `.docx`) to HTML using:
 From npm (when published):
 
 ```bash
-npm i node-jsdoc-to-html
+npm i doc-to-html
 ```
 
 From GitHub repository:
@@ -40,7 +40,7 @@ Make sure these tools are available in `PATH`:
 ## Usage
 
 ```js
-import { convertWordToHtml } from "node-jsdoc-to-html";
+import { convertWordToHtml } from "doc-to-html";
 
 await convertWordToHtml("/files/input.doc", "/files/output.html");
 ```
@@ -48,7 +48,7 @@ await convertWordToHtml("/files/input.doc", "/files/output.html");
 ### Convert `.doc` to `.docx` only
 
 ```js
-import { docToDocxByLibreOffice } from "node-jsdoc-to-html";
+import { docToDocxByLibreOffice } from "doc-to-html";
 
 const docxPath = await docToDocxByLibreOffice("/files/input.doc", "/files/out");
 ```
@@ -56,7 +56,7 @@ const docxPath = await docToDocxByLibreOffice("/files/input.doc", "/files/out");
 ### Convert `.docx` to HTML only
 
 ```js
-import { wordToHtmlByPandoc } from "node-jsdoc-to-html";
+import { wordToHtmlByPandoc } from "doc-to-html";
 
 const htmlPath = await wordToHtmlByPandoc("/files/input.docx", "/files/output.html");
 ```

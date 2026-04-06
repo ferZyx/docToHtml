@@ -1,5 +1,5 @@
 {
-  "name": "node-jsdoc-to-html",
+  "name": "doc-to-html",
   "version": "1.1.0",
   "description": "Convert .doc/.docx files to HTML using LibreOffice + Pandoc",
   "main": "./wordToHtmlConverter.js",
